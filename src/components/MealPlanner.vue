@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CalenderDays from "./CalendarDays.vue";
+import CalenderDays from "./CalenderDays.vue";
 </script>
 
 <template>
