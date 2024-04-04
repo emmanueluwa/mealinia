@@ -5,6 +5,7 @@
 <template>
   <v-layout>
     <v-container class="main">
+      <!-- <AppBar /> -->
       <main><router-view /></main>
     </v-container>
     <v-footer app>

@@ -7,10 +7,17 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AppBar: typeof import('./src/components/layouts/default/AppBar.vue')['default']
     CalendarDays: typeof import('./src/components/CalendarDays.vue')['default']
+    CalenderCard: typeof import('./src/components/CalenderCard.vue')['default']
+    Default: typeof import('./src/components/layouts/default/Default.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     MealPlanner: typeof import('./src/components/MealPlanner.vue')['default']
+    RecipeList: typeof import('./src/components/RecipeList.vue')['default']
+    RecipesList: typeof import('./src/components/RecipesList.vue')['default']
+    RecipeTable: typeof import('./src/components/RecipeTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    View: typeof import('./src/components/layouts/default/View.vue')['default']
   }
 }
