@@ -20,6 +20,11 @@ const routes = [
         name: "recipes",
         component: () => import("@/views/RecipesView.vue"),
       },
+      {
+        path: "/recipe/:id",
+        name: "recipe",
+        component: () => import("../views/RecipeView.vue"),
+      },
     ],
   },
 ];

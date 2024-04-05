@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { Ref } from "vue";
+import type { RecipeResults } from "../types/spoonacular";
 import CalenderCard from "./CalenderCard.vue";
+import RecipeSearch from "../components/RecipeSearch.vue";
+
+interface Today {
+  id: number;
+  title: string;
+  readyInMinutes: number;
+}
 
 const props = defineProps({
   date: {
@@ -18,6 +26,7 @@ const props = defineProps({
 interface Card {
   date: Date;
   content: string;
+  today: Today[];
 }
 
 const generateCards = (startDate: Date, numberOfDays: number): Card[] => {
@@ -43,9 +52,33 @@ const recipeDialogOpen = (card: Card): void => {
   dialogVisible.value = true;
 };
 
-const recipeDialogClose = (card: Card): void => {
+const recipeDialogClose = (): void => {
   dateSelected.value = null;
   dialogVisible.value = false;
+};
+
+const insertRecipeOnDay = (recipe: RecipeResults): void => {
+  if (dateSelected.value) {
+    cards.value = cards.value.map((card) => {
+      if (card.date.getTime() === dateSelected.value?.getTime()) {
+        return { ...card, today: [...card.today, recipe] };
+      }
+      return card;
+    });
+    recipeDialogClose();
+  }
+};
+
+const removeRecipeFromDay = (recipe: { id: number }, date: Date): void => {
+  cards.value = cards.value.map((card) => {
+    if (card.date.getTime() === date.getTime()) {
+      return {
+        ...card,
+        today: card.today.filter((today) => today.id !== recipe.id),
+      };
+    }
+    return card;
+  });
 };
 </script>
 
@@ -59,7 +92,11 @@ const recipeDialogClose = (card: Card): void => {
     <tbody>
       <tr v-for="card in cards" :key="card.date.toString()">
         <td class="py-4">
-          <calender-card :card="card" @daySelected="recipeDialogOpen" />
+          <calender-card
+            :card="card"
+            @daySelected="recipeDialogOpen"
+            @recipeRemoved="removeRecipeFromDay"
+          />
         </td>
       </tr>
     </tbody>
@@ -67,6 +104,7 @@ const recipeDialogClose = (card: Card): void => {
   <v-dialog v-model="dialogVisible" scrollable>
     <v-card>
       <v-card-title> Search for a recipe to add 😋</v-card-title>
+      <recipe-search @recipeSelected="insertRecipeOnDay" />
       <v-card-actions>
         <v-btn color="primary" block @click="recipeDialogClose"
           >Close Dialog</v-btn
