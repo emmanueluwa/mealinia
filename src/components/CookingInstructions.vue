@@ -4,6 +4,9 @@ import type { Ref } from "vue";
 import type { Recipe } from "../types/spoonacular";
 import { useRecipeInformation } from "../composables/recipeApi";
 import AppLoader from "./AppLoader.vue";
+import { useCacheStore } from "../stores/cache";
+
+const store = useCacheStore();
 
 const props = defineProps({
   id: {
@@ -16,11 +19,17 @@ const props = defineProps({
   },
 });
 
-const recipe: ref<Recipe | null> = ref(null);
+const recipe: Ref<Recipe | null> = ref(null);
 
 const getRecipeDetails = async (id: number): Promise<void> => {
-  const data = (await useRecipeInformation(id.toString())) as Recipe;
-  recipe.value = data;
+  const cacheKey = `recipe-details-${props.id}`;
+  if (store.cachedData(cacheKey)) {
+    recipe.value = store.cachedData(cacheKey) as Recipe;
+  } else {
+    const data = (await useRecipeInformation(id.toString())) as Recipe;
+    store.cacheData(cacheKey, data);
+    recipe.value = data;
+  }
 };
 
 const panel = ref<number | null>(1);
