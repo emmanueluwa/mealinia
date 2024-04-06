@@ -35,7 +35,7 @@ const getRecipeDetails = async (id: number): Promise<void> => {
 const panel = ref<number | null>(1);
 
 onMounted(() => {
-  getRecipeDetails(props.activePanel);
+  getRecipeDetails(props.id);
 });
 </script>
 

@@ -63,6 +63,7 @@ const cards = ref<Card[]>(generateCards(props.date, props.days));
 
 const dialogVisible: Ref<boolean> = ref(false);
 const dateSelected: Ref<Date | null> = ref(null);
+
 const recipeDialogOpen = (card: Card): void => {
   dateSelected.value = card.date;
   dialogVisible.value = true;

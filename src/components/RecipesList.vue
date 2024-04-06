@@ -1,48 +1,25 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import type { Ref } from "vue";
 
 import type { Recipe } from "../types/spoonacular";
 import RecipeTable from "./RecipeTable.vue";
+import CookingInstructions from "./CookingInstructions.vue";
+import AppLink from "./AppLink.vue";
 
-interface RecipeList extends Recipe {
-  date: Date;
-}
+import { storeToRefs } from "pinia";
+import { usePlannerStore } from "../stores/planner";
+const store = usePlannerStore();
 
-//return a date in the future:
-const addDays = (days: number): Date => {
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-  return date;
+const dialogVisible: Ref<boolean> = ref(false);
+const selectedRecipe: Ref<Recipe | null> = ref(null);
+
+const { pastRecipes, futureRecipes } = storeToRefs(store);
+
+const openPreview = (recipe: Recipe): void => {
+  selectedRecipe.value = recipe;
+  dialogVisible.value = true;
 };
-
-//mock data
-const recipes = [
-  { id: 1, title: "test", date: addDays(1) },
-  { id: 2, title: "test2", date: addDays(1) },
-  { id: 3, title: "test3", date: addDays(1) },
-  { id: 4, title: "test4", date: addDays(1) },
-  {},
-];
-
-const openPreview = (recipe: { title: string }): void => {
-  console.log(`opening recipe ${recipe.title}`);
-};
-
-const pastRecipes = computed(() =>
-  recipes.filter((recipe: RecipeList) => {
-    const date = new Date(recipe.date);
-    return date < new Date();
-  })
-);
-
-const futureRecipes = computed(
-  () =>
-    recipes.filter((recipe: RecipeList) => {
-      const date = new Date(recipe.date);
-      return date >= new Date();
-    }) as RecipeList[]
-);
 
 const tab: Ref<string> = ref("upcoming");
 
@@ -77,10 +54,23 @@ onMounted(() => {
         <RecipeTable
           :recipes="futureRecipes"
           title="Upcoming Recipes"
-          removable
           @openPreview="openPreview"
         />
       </v-window-item>
     </v-window>
+    <v-dialog v-model="dialogVisible" class="dialog" scrollable>
+      <v-card v-if="selectedRecipe">
+        <cooking-instructions :id="selectedRecipe.id" />
+        <v-card-actions>
+          <v-btn text>
+            <app-link :to="`/recipe/${selectedRecipe.id}`"
+              >Cooking instructions</app-link
+            >
+          </v-btn>
+          <v-spacer />
+          <v-btn @click="dialogVisible = false" icon="mdi-close"> </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
