@@ -73,23 +73,20 @@ const recipeDialogClose = (): void => {
   dialogVisible.value = false;
 };
 
-const insertRecipeOnDay = (recipe: RecipeResults): void => {
-  if (dateSelected.value) {
-    store.addRecipe({ ...recipe, date: dateSelected.value });
-    recipeDialogClose();
+const preloadRecipe = async (id: number): Promise<void> => {
+  const cacheKey = `recipe.details.${id}`;
+  if (!cacheStore.cachedData(cacheKey)) {
+    const data = (await useRecipeInformation(id.toString())) as Recipe;
+    cacheStore.cacheData(cacheKey, data);
   }
 };
 
-const removeRecipeFromDay = (recipe: { id: number }, date: Date): void => {
-  cards.value = cards.value.map((card) => {
-    if (card.date.getTime() === date.getTime()) {
-      return {
-        ...card,
-        today: card.today.filter((today) => today.id !== recipe.id),
-      };
-    }
-    return card;
-  });
+const insertRecipeOnDay = (recipe: RecipeResults): void => {
+  if (dateSelected.value) {
+    preloadRecipe(recipe.id);
+    store.addRecipe({ ...recipe, date: dateSelected.value });
+    recipeDialogClose();
+  }
 };
 </script>
 
@@ -103,11 +100,7 @@ const removeRecipeFromDay = (recipe: { id: number }, date: Date): void => {
     <tbody>
       <tr v-for="card in cards" :key="card.date.toString()">
         <td class="py-4">
-          <calender-card
-            :card="card"
-            @daySelected="recipeDialogOpen"
-            @recipeRemoved="removeRecipeFromDay"
-          />
+          <calender-card :card="card" @daySelected="recipeDialogOpen" />
         </td>
       </tr>
     </tbody>
