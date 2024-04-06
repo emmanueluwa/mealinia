@@ -18,6 +18,12 @@ interface Today {
   readyInMinutes: number;
 }
 
+interface Card {
+  date: Date;
+  content: string;
+  today: Today[];
+}
+
 const props = defineProps({
   date: {
     type: Date,
@@ -34,12 +40,6 @@ const props = defineProps({
     value: [],
   },
 });
-
-interface Card {
-  date: Date;
-  content: string;
-  today: Today[];
-}
 
 const generateCards = (startDate: Date, numberOfDays: number): Card[] => {
   const cards: Card[] = [];

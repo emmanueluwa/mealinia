@@ -32,7 +32,7 @@ export const usePlannerStore = defineStore("planner", () => {
     }) as RecipeList[];
   });
 
-  const addRecipe = (recipe: Recipe) => {
+  const addRecipe = (recipe: RecipeList) => {
     recipes.value.push(recipe);
   };
 

@@ -59,10 +59,10 @@ onMounted(() => {
       </v-window-item>
     </v-window>
     <v-dialog v-model="dialogVisible" class="dialog" scrollable>
-      <v-card v-if="selectedRecipe">
+      <v-card v-if="selectedRecipe && selectedRecipe.id">
         <cooking-instructions :id="selectedRecipe.id" />
         <v-card-actions>
-          <v-btn text>
+          <v-btn text="Instructions">
             <app-link :to="`/recipe/${selectedRecipe.id}`"
               >Cooking instructions</app-link
             >

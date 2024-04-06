@@ -2,6 +2,7 @@
 import { useFormatDate } from "../composables/formatters";
 import AppLink from "./AppLink.vue";
 import { usePlannerStore } from "../stores/planner";
+import RecipeRating from "./RecipeRating.vue";
 
 const store = usePlannerStore();
 
@@ -35,7 +36,7 @@ const removeFromDay = (recipes: { id: number; date: Date }): void => {
       ><h2 class="text-h2">{{ useFormatDate(card.date) }}</h2></v-sheet
     >
     <v-sheet class="ma-2 pa-2"
-      ><v-btn text @click="addRecipeToDay(card)" icon="mdi-plus"></v-btn
+      ><v-btn text="Add" @click="addRecipeToDay(card)" icon="mdi-plus"></v-btn
     ></v-sheet>
   </v-sheet>
   <v-col>
@@ -44,10 +45,11 @@ const removeFromDay = (recipes: { id: number; date: Date }): void => {
         <app-link :to="`/recipe/${today.id}`">{{ today.title }}</app-link>
       </v-card-title>
       <v-card-text>{{ today.readyInMinutes }} minutes</v-card-text>
+      <recipe-rating :id="today.id" />
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
-          text
+          text="Delete"
           icon="mdi-trash-can-outline"
           @click="removeFromDay({ id: today.id, date: card.date })"
         ></v-btn>

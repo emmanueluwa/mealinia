@@ -41,7 +41,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <AppLoader v-if="!recipe" />
+  <AppLoader v-if="!recipe || !recipe.id" />
+
   <v-container v-else fluid>
     <v-col>
       <v-img height="200" :src="recipe.image" cover v-if="recipe.image" />
