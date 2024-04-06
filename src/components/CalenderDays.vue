@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { Ref } from "vue";
-import type { RecipeResults } from "../types/spoonacular";
+import type { RecipeResults, Recipe } from "../types/spoonacular";
+import { useRecipeInformation } from "../composables/recipeApi";
 import CalenderCard from "./CalenderCard.vue";
 import RecipeSearch from "../components/RecipeSearch.vue";
+
+import { usePlannerStore } from "../stores/planner";
+const store = usePlannerStore();
+
+import { useCacheStore } from "@/stores/cache";
+const cacheStore = useCacheStore();
 
 interface Today {
   id: number;
@@ -21,6 +28,11 @@ const props = defineProps({
     required: false,
     default: 7,
   },
+  recipes: {
+    type: Array,
+    required: false,
+    value: [],
+  },
 });
 
 interface Card {
@@ -36,7 +48,11 @@ const generateCards = (startDate: Date, numberOfDays: number): Card[] => {
   for (let i = 0; i < numberOfDays; i++) {
     const date = new Date(currentDate.getTime());
     const content = `Card ${i + 1}`;
-    cards.push({ date, content });
+    const recipesThisDay = props.recipes?.filter((recipe: any) => {
+      const recipeDate = new Date(recipe.date).setHours(0, 0, 0, 0);
+      return recipeDate === date.setHours(0, 0, 0, 0);
+    }) as Today[];
+    cards.push({ date, content, today: recipesThisDay });
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
@@ -59,12 +75,7 @@ const recipeDialogClose = (): void => {
 
 const insertRecipeOnDay = (recipe: RecipeResults): void => {
   if (dateSelected.value) {
-    cards.value = cards.value.map((card) => {
-      if (card.date.getTime() === dateSelected.value?.getTime()) {
-        return { ...card, today: [...card.today, recipe] };
-      }
-      return card;
-    });
+    store.addRecipe({ ...recipe, date: dateSelected.value });
     recipeDialogClose();
   }
 };
