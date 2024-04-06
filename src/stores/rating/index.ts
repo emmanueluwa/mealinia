@@ -10,7 +10,7 @@ interface Rating {
 export const useRatingStore = defineStore("rating", () => {
   const ratings = ref<Rating[] | any>(useLocalStorage("rating", []));
 
-  const getRatingsById = (id: number) => {
+  const getRatingById = (id: number) => {
     const rating = ratings.value.find((rating: Rating) => rating.id === id);
 
     return rating?.rating;
@@ -28,5 +28,5 @@ export const useRatingStore = defineStore("rating", () => {
     }
   };
 
-  return { getRatingsById, saveRating };
+  return { getRatingById, saveRating };
 });
